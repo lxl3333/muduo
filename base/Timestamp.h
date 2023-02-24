@@ -19,54 +19,55 @@ public:
 
     string toString() const;
     string toFormattedString(bool showMicroseconds = true) const;
+
     bool valid() const{//判断时间戳是否有效
         return microSecondsSinceEpoch_>0;
     }
+
     int64_t microSecondsSinceEpoch() const{
         return microSecondsSinceEpoch_;
     }
+
     time_t secondsSinceEpoch() const{
-        return microSecondsSinceEpoch_/kMicroSecondsPerSecond;
+        return static_cast<time_t>(microSecondsSinceEpoch_/kMicroSecondsPerSecond);
     }
+
     static Timestamp now();
     static Timestamp invalid(){
         return Timestamp();
     }
 
-    static Timestamp fromUnixTime(time_t t){
-        return Timestamp(t*kMicroSecondsPerSecond);
+    static Timestamp fromUnixTime(time_t t,int microseconds){
+        return Timestamp(static_cast<int64_t>(t)*kMicroSecondsPerSecond+microseconds);
     }
 
-    static Timestamp fromUnixTIme(time_t t,int microseconds){
-        return Timestamp(t*kMicroSecondsPerSecond+microseconds);
+    static Timestamp fromUnixTime(time_t t){
+        return fromUnixTime(t,0);
     }
+
+   
 
     static const int kMicroSecondsPerSecond =1000*1000;
 private:
     int64_t microSecondsSinceEpoch_;
 };
 
-inline bool operator<(Timestamp lhs,Timestamp rhs);
-
-inline bool operator==(Timestamp lhs,Timestamp rhs);
-
-inline double timeDifference(Timestamp high,Timestamp low);
-
-inline Timestamp addTime(Timestamp timestamp,double seconds);
-
+inline bool operator<(Timestamp lhs,Timestamp rhs){
+    return lhs.microSecondsSinceEpoch()<rhs.microSecondsSinceEpoch();
 }
 
+inline bool operator==(Timestamp lhs,Timestamp rhs){
+    return lhs.microSecondsSinceEpoch()==rhs.microSecondsSinceEpoch();
+}
 
+inline double timeDifference(Timestamp high,Timestamp low){
+    return static_cast<double>(high.microSecondsSinceEpoch()-low.microSecondsSinceEpoch())/(Timestamp::kMicroSecondsPerSecond);
+}
 
-
-
-
-
-
-
-
-
-
+inline Timestamp addTime(Timestamp timestamp,double seconds){
+    return Timestamp(timestamp.microSecondsSinceEpoch()+static_cast<int64_t>(seconds*Timestamp::kMicroSecondsPerSecond));
+}
+}
 
 
 
