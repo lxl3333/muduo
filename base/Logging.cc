@@ -134,7 +134,7 @@ void Logger::Impl::formatTime()
     if(g_logTimeZone.valid())
     {
         Fmt us(".%06d ",microSeconds);
-        assert(us.length()==8)
+        assert(us.length()==8);
         stream_<<T(t_time,17)<<T(us.data(),8);
     }
     else
